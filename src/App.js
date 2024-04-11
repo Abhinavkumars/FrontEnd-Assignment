@@ -4,6 +4,7 @@ import Login from "./Components/Login/Login";
 import Register from "./Components/Register/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from "react";
+import Courses from "./Components/Courses/Courses";
 
 function App() {
   const [userstate, setUserState] = useState({});
@@ -29,6 +30,7 @@ function App() {
             element={<Login setUserState={setUserState} />}
           ></Route>
           <Route path="/signup" element={<Register />}></Route>
+          <Route path="/courses" element={<Courses />}></Route>
         </Routes>
       </Router>
     </div>

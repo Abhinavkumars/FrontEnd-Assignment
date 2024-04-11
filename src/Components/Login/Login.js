@@ -3,6 +3,7 @@ import basestyle from "../Base.module.css";
 import loginstyle from "./Login.module.css";
 import axios from "axios";
 import { useNavigate, NavLink } from "react-router-dom";
+import { LoginUser, ValidateToken } from "../../AxiosCalls/users";
 const Login = ({ setUserState }) => {
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState({});
@@ -33,23 +34,36 @@ const Login = ({ setUserState }) => {
     return error;
   };
 
-  const loginHandler = (e) => {
+  const loginHandler = async (e) => {
     e.preventDefault();
     setFormErrors(validateForm(user));
-    setIsSubmit(true);
-    // if (!formErrors) {
+    // setIsSubmit(true);
 
-    // }
+    const response = await LoginUser(user);
+    if (!response.status) {
+      alert(response.message);
+      console.log(response.message);
+    } else {
+      alert(response.message);
+      localStorage.setItem("token", response.token);
+      window.location.href = "http://localhost:3000/";
+    }
   };
 
-  useEffect(() => {
-    if (Object.keys(formErrors).length === 0 && isSubmit) {
-      console.log(user);
-      axios.post("http://localhost:9002/login", user).then((res) => {
-        alert(res.data.message);
-        setUserState(res.data.user);
-        navigate("/", { replace: true });
+  useEffect(async () => {
+    if (localStorage.getItem("token")) {
+      const response = await ValidateToken({
+        token: localStorage.getItem("token"),
       });
+      if (response.status) {
+        const userName = response.data.name;
+        const userId = response.data.id;
+        localStorage.setItem("Username", userName);
+        localStorage.setItem("UserId", userId);
+        console.log(userName);
+        alert("Logged In Successful");
+        window.location.href = "http://localhost:3000/courses";
+      }
     }
   }, [formErrors]);
   return (
